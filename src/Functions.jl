@@ -8,7 +8,7 @@ sqdist(p1::Pos,p2::Pos) = (p1.x - p2.x) ^ 2 + (p1.y - p2.y) ^ 2
 
 sqrtdist(p1::Pos,p2::Pos) = sqrt(sqdist(p1,p2))
 
-mean(v::Vector{Pos}) = sum([(p.x + p.y) / 2 for p in v]) / length(v)
+mean(v::Vector{Pos}) = sum([abs((p.x + p.y) / 2) for p in v]) / length(v)
 
 function spring_force(p1::Pos,p2::Pos,k::Float64,L::Float64)
 	d = sqrtdist(p1,p2)
@@ -20,8 +20,7 @@ end
 
 function optimization_step!(world::Types.World)
 	for node in world.nodes
-		node.opt_position.x = node.position.x + world.timestep_length * node.velocity.x
-		node.opt_position.y = node.position.y + world.timestep_length * node.velocity.y
+		node.opt_position = node.position + node.velocity * world.timestep_length
 	end
 	
 	forces = [Pos(0.0,0.0) for _ in 1:length(world.nodes)]
@@ -46,6 +45,10 @@ function step!(world::Types.World)
 		mean_velocity = mean([n.velocity for n in world.nodes])
 		velocity_diff = abs(mean_velocity - old_mean_velocity)
 		old_mean_velocity = mean_velocity
+	end
+
+	for node in world.nodes
+		node.position += node.velocity * world.timestep_length
 	end
 end
 
