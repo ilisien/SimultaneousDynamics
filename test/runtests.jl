@@ -1,5 +1,6 @@
 using SimultaneousDynamics
 using Test
+using CairoMakie
 
 @testset "SimultaneousDynamics.jl" begin
     nodes = [
@@ -18,12 +19,16 @@ using Test
     ]
 
     world = World(nodes,springs,0.0001,0.1,0.2)
-    for _ in 1:10000
+    for i in 1:1000
         step!(world)
 
         for node in world.nodes
             println("Position: ($(node.position.x), $(node.position.y)), Velocity: ($(node.velocity.x), $(node.velocity.y))")
         end
         println("")
+
+        fig = plot_world(world)
+
+        CairoMakie.save("$(string(i, pad=4)).png",fig)
     end
 end
