@@ -10,6 +10,7 @@ end
 struct Node
 	position::Pos
 	velocity::Pos
+	opt_position::Pos
 end
 
 struct Spring
@@ -23,6 +24,7 @@ struct World
 	springs::Vector{Spring}
 	optimization_threshold::Float64
 	timestep_length::Float64
+	drag_force::Float64
 end
 
 end
