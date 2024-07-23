@@ -6,6 +6,9 @@ version = "1.0.0-DEV"
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+FilePathsBase = "48062228-2e41-5def-b9a4-89aafe57970f"
+Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]

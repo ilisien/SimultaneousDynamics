@@ -73,11 +73,24 @@ Represents a node in the spring system.
 - `position::Pos`: The current position of the node.
 - `velocity::Pos`: The current velocity of the node.
 - `opt_position::Pos`: The optimized position of the node after an optimization step.
+- `fixed::Bool`: Indicates whether the node is fixed in place (cannot move).
+- `ext_force::Pos`: The external force applied to the node.
+
+# Constructors
+- `Node(position::Pos; velocity::Pos=Pos(0.0, 0.0), opt_position::Pos=Pos(0.0, 0.0), fixed::Bool=false, ext_force::Pos=Pos(0.0, 0.0))`: Create a `Node` with optional default values for `velocity`, `opt_position`, `fixed`, and `ext_force`.
 """
 mutable struct Node
 	position::Pos
 	velocity::Pos
 	opt_position::Pos
+	fixed::Bool
+	ext_force::Pos
+
+	Node(position::Pos;
+		 velocity::Pos=Pos(0.0,0.0),
+		 opt_position::Pos=Pos(0.0,0.0),
+		 fixed::Bool=false,
+		 ext_force::Pos=Pos(0.0,0.0)) = new(position, velocity, opt_position, fixed, ext_force)
 end
 
 """
