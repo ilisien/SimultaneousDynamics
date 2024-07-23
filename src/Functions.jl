@@ -80,7 +80,7 @@ function optimization_step!(world::Types.World)
 		node.opt_position = node.position + node.velocity * world.timestep_length
 	end
 	
-	forces = [Pos(0.0,0.0) for _ in 1:length(world.nodes)]
+	forces = [n.ext_force for n in world.nodes]
 
 	for spring in world.springs
 		force = spring_force(world.nodes[spring.connections[1]].opt_position,world.nodes[spring.connections[2]].opt_position,spring.stiffness,spring.relax_length)
@@ -89,7 +89,9 @@ function optimization_step!(world::Types.World)
 	end
 	
 	for (i,node) in enumerate(world.nodes)
-		node.velocity = forces[i] * world.drag
+		if !(node.fixed)
+			node.velocity = forces[i] * world.drag
+		end
 	end
 end
 
