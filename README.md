@@ -22,5 +22,5 @@ See docstrings within code for documentation -- WIP documentation for readme.
 8. Precompile and run the test simulation via `> test SimultaneousDynamics`. The `/test_output/raw_imgs` directories will be created for temporary images to be stored before the program finishes and stacks to `/test_output/simdyn_stack.tiff`.  
   
 - To exit the package manager and the Julia REPL:  
-    Press '<-Backspace' to exit the package manager.
+    Press Backspace to exit the package manager.
     Run `> exit()`.
