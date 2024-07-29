@@ -92,6 +92,9 @@ function optimization_step!(world::Types.World)
 		if !(node.fixed)
 			node.velocity = forces[i] * world.drag
 		end
+		#if i == 7
+		#	node.velocity = Pos(0.6,0.0)
+		#end
 	end
 end
 
@@ -104,14 +107,17 @@ Performs a simulation step on the world to update the positions and velocities o
 - `world::Types.World`: The world containing nodes and springs to be simulated.
 """
 function step!(world::Types.World)
-	old_mean_velocity = 0.0
-	velocity_diff = 100.0
+	old_velocities = [Pos(0.0,0.0) for _ in world.nodes]
+	mean_velocity_diff = 100.0
+	osteps = 0
 
-	while velocity_diff >= world.optimization_threshold
+	while mean_velocity_diff >= world.optimization_threshold
 		optimization_step!(world)
-		mean_velocity = mean([n.velocity for n in world.nodes])
-		velocity_diff = abs(mean_velocity - old_mean_velocity)
-		old_mean_velocity = mean_velocity
+		new_velocities = [n.velocity for n in world.nodes]
+		mean_velocity_diff = mean([sqrtdist(new_velocities[i],old_velocities[i]) for i in 1:length(world.nodes)])
+		old_velocities = new_velocities
+		print(mean_velocity_diff)
+		osteps += 1
 	end
 
 	for node in world.nodes

@@ -6,7 +6,7 @@ using CairoMakie
 export plot_world 
 
 function plot_world(world::Types.World)
-	fig = Figure(size=(150,150), padding=(0,0,0,0))
+	fig = Figure(size=(2500,1500), padding=(0,0,0,0))
 	ax = Axis(fig[1, 1], 
 			  aspect=DataAspect(),
 			  xlabel="", ylabel="",
@@ -24,12 +24,12 @@ function plot_world(world::Types.World)
 		node1 = world.nodes[spring.connections[1]]
 		node2 = world.nodes[spring.connections[2]]
 	
-		lines!(ax, [node1.position.x, node2.position.x], [node1.position.y, node2.position.y], color=:black, linewidth=2)
+		lines!(ax, [node1.position.x, node2.position.x], [node1.position.y, node2.position.y], color=:black, linewidth=20)
 	end
 
-	scatter!(ax, node_xs, node_ys, color=:red, markersize=4)
+	scatter!(ax, node_xs, node_ys, color=:red, markersize=40)
 
-	xlims!(ax, -2, 6)
+	xlims!(ax, -2, 10)
 	ylims!(ax, -4, 4)
 	hidedecorations!(ax)
 	hidespines!(ax)
