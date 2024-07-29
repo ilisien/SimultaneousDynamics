@@ -37,6 +37,23 @@ function node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64)
     return nodes, springs
 end
 
+"""
+Constructs a line of nodes connected by springs in a specified direction.
+
+# Arguments
+- `n_nodes::Int`: Number of nodes in the line.
+- `length::Float64`: Total length of the line.
+- `k::Float64`: Spring stiffness coefficient.
+- `r::Float64`: Rest length of the spring.
+- `angle::Float64=0.0`: Angle (in radians) of the line direction relative to the x-axis. Default is 0.0.
+
+# Returns
+- `nodes`: Array of `Node` objects representing each node.
+- `springs`: Array of `Spring` objects connecting the nodes.
+
+Each node is positioned along the line according to its index and the total length,
+with springs connecting adjacent nodes.
+"""
 function node_line(n_nodes::Int,length::Float64,k::Float64,r::Float64;angle::Float64=0.0)
     nodes = []
     for i in 1:n_nodes

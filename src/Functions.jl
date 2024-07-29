@@ -33,15 +33,27 @@ Calculates the Euclidean distance between two positions.
 sqrtdist(p1::Pos,p2::Pos) = sqrt(sqdist(p1,p2))
 
 """
-    mean(v::Vector{Pos}) -> Float64
+Calculates the mean of the given vector.
 
+# Methods
+
+## `mean(v::Vector{Pos}) -> Float64`
 Calculates the mean of the absolute values of the coordinates in a vector of positions.
 
-# Parameters
-- `v::Vector{Pos}`: A vector of positions.
+- **Parameters**
+  - `v::Vector{Pos}`: A vector of `Pos` objects, each with `x` and `y` coordinates.
 
-# Returns
-- `Float64`: The mean of the absolute values of the coordinates.
+- **Returns**
+  - `Float64`: The mean of the absolute values of the coordinates.
+
+## `mean(v::Vector{Float64}) -> Float64`
+Calculates the mean of a vector of floating-point numbers.
+
+- **Parameters**
+  - `v::Vector{Float64}`: A vector of floating-point numbers.
+
+- **Returns**
+  - `Float64`: The mean of the values in the vector.
 """
 mean(v::Vector{Pos}) = sum([abs((p.x + p.y) / 2) for p in v]) / length(v)
 
