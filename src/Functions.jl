@@ -106,9 +106,6 @@ function optimization_step!(world::Types.World)
 		if !(node.fixed)
 			node.velocity = forces[i] * world.drag
 		end
-		#if i == 7
-		#	node.velocity = Pos(0.6,0.0)
-		#end
 	end
 end
 
