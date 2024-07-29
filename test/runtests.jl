@@ -10,27 +10,10 @@ using CairoMakie
 
     num_sides = 21
     radius = 2.0
-    stiffness = 1
+    stiffness = 1.0
     relaxed_length = 0.0
     #nodes, springs = node_polygon(num_sides, radius, stiffness, relaxed_length)
-    nodes = [
-        Node(Pos(0.0,0.0)),
-        Node(Pos(0.5,0.0)),
-        Node(Pos(1.0,0.0)),
-        Node(Pos(1.5,0.0)),
-        Node(Pos(2.0,0.0)),
-        Node(Pos(2.5,0.0)),
-        Node(Pos(3.0,0.0)),
-    ]
-
-    springs = [
-        Spring((1,2),stiffness,relaxed_length),
-        Spring((2,3),stiffness,relaxed_length),
-        Spring((3,4),stiffness,relaxed_length),
-        Spring((4,5),stiffness,relaxed_length),
-        Spring((5,6),stiffness,relaxed_length),
-        Spring((6,7),stiffness,relaxed_length),
-    ]
+    nodes, springs = node_line(7,3.0,stiffness,relaxed_length)
 
     nodes[7].ext_force = Pos(3.0,0.0) # set an external force in the positive x direction of 5.0
     nodes[1].fixed = true # set node 1 static

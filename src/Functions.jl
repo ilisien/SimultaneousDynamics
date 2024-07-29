@@ -45,6 +45,8 @@ Calculates the mean of the absolute values of the coordinates in a vector of pos
 """
 mean(v::Vector{Pos}) = sum([abs((p.x + p.y) / 2) for p in v]) / length(v)
 
+mean(v::Vector{Float64}) = sum(v) / length(v)
+
 """
     spring_force(p1::Pos, p2::Pos, k::Float64, L::Float64) -> Pos
 
@@ -116,7 +118,6 @@ function step!(world::Types.World)
 		new_velocities = [n.velocity for n in world.nodes]
 		mean_velocity_diff = mean([sqrtdist(new_velocities[i],old_velocities[i]) for i in 1:length(world.nodes)])
 		old_velocities = new_velocities
-		print(mean_velocity_diff)
 		osteps += 1
 	end
 
