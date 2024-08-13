@@ -33,17 +33,31 @@ Calculates the Euclidean distance between two positions.
 sqrtdist(p1::Pos,p2::Pos) = sqrt(sqdist(p1,p2))
 
 """
-    mean(v::Vector{Pos}) -> Float64
+Calculates the mean of the given vector.
 
+# Methods
+
+## `mean(v::Vector{Pos}) -> Float64`
 Calculates the mean of the absolute values of the coordinates in a vector of positions.
 
-# Parameters
-- `v::Vector{Pos}`: A vector of positions.
+- **Parameters**
+  - `v::Vector{Pos}`: A vector of `Pos` objects, each with `x` and `y` coordinates.
 
-# Returns
-- `Float64`: The mean of the absolute values of the coordinates.
+- **Returns**
+  - `Float64`: The mean of the absolute values of the coordinates.
+
+## `mean(v::Vector{Float64}) -> Float64`
+Calculates the mean of a vector of floating-point numbers.
+
+- **Parameters**
+  - `v::Vector{Float64}`: A vector of floating-point numbers.
+
+- **Returns**
+  - `Float64`: The mean of the values in the vector.
 """
 mean(v::Vector{Pos}) = sum([abs((p.x + p.y) / 2) for p in v]) / length(v)
+
+mean(v::Vector{Float64}) = sum(v) / length(v)
 
 """
     spring_force(p1::Pos, p2::Pos, k::Float64, L::Float64) -> Pos
@@ -104,14 +118,16 @@ Performs a simulation step on the world to update the positions and velocities o
 - `world::Types.World`: The world containing nodes and springs to be simulated.
 """
 function step!(world::Types.World)
-	old_mean_velocity = 0.0
-	velocity_diff = 100.0
+	old_velocities = [Pos(0.0,0.0) for _ in world.nodes]
+	mean_velocity_diff = 100.0
+	osteps = 0
 
-	while velocity_diff >= world.optimization_threshold
+	while mean_velocity_diff >= world.optimization_threshold
 		optimization_step!(world)
-		mean_velocity = mean([n.velocity for n in world.nodes])
-		velocity_diff = abs(mean_velocity - old_mean_velocity)
-		old_mean_velocity = mean_velocity
+		new_velocities = [n.velocity for n in world.nodes]
+		mean_velocity_diff = mean([sqrtdist(new_velocities[i],old_velocities[i]) for i in 1:length(world.nodes)])
+		old_velocities = new_velocities
+		osteps += 1
 	end
 
 	for node in world.nodes

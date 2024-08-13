@@ -3,7 +3,7 @@ module Utilities
 using ..Types
 using Images, FileIO, FilePathsBase
 
-export node_polygon, create_image_stack
+export node_polygon, create_image_stack, node_line
 
 """
     node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64) -> Tuple{Vector{Node}, Vector{Spring}}
@@ -32,6 +32,39 @@ function node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64)
     for i in 1:num_sides
         next_index = i % num_sides + 1
         push!(springs, Spring((i, next_index), k, r))
+    end
+
+    return nodes, springs
+end
+
+"""
+Constructs a line of nodes connected by springs in a specified direction.
+
+# Arguments
+- `n_nodes::Int`: Number of nodes in the line.
+- `length::Float64`: Total length of the line.
+- `k::Float64`: Spring stiffness coefficient.
+- `r::Float64`: Rest length of the spring.
+- `angle::Float64=0.0`: Angle (in radians) of the line direction relative to the x-axis. Default is 0.0.
+
+# Returns
+- `nodes`: Array of `Node` objects representing each node.
+- `springs`: Array of `Spring` objects connecting the nodes.
+
+Each node is positioned along the line according to its index and the total length,
+with springs connecting adjacent nodes.
+"""
+function node_line(n_nodes::Int,length::Float64,k::Float64,r::Float64;angle::Float64=0.0)
+    nodes = []
+    for i in 1:n_nodes
+        x = (i*length/n_nodes)*cos(angle)
+        y = (i*length/n_nodes)*sin(angle)
+        push!(nodes, Node(Pos(x,y)))
+    end
+
+    springs = []
+    for i in 1:(n_nodes-1)
+        push!(springs,Spring((i,i+1), k, r))
     end
 
     return nodes, springs
