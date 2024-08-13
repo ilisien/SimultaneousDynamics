@@ -22,7 +22,7 @@ Generates a polygonal arrangement of nodes connected by springs.
 function node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64)
     nodes = []
     for i in 1:num_sides
-        angle = 2 * π * (i-1) / num_sides
+        angle = 2 * π * (i - 1) / num_sides
         x = radius * cos(angle)
         y = radius * sin(angle)
         push!(nodes, Node(Pos(x, y)))
@@ -47,13 +47,49 @@ Stacks a series of images into a single 3D image and saves it to the specified o
 - `output_path::String`: The file path where the stacked image will be saved. This should be a string representing the desired output location and filename.
 - `delete_after::Bool`: A boolean flag indicating whether the original images should be deleted after stacking. Defaults to `false`.
 """
-function create_image_stack(image_paths::Vector{String},output_path::String,delete_after::Bool=false)
+function create_image_stack(image_paths::Vector{String}, output_path::String, delete_after::Bool=false)
     images = [load(img) for img in image_paths]
-    save(output_path, cat(images ..., dims=3))
-    
+    save(output_path, cat(images..., dims=3))
+
     if delete_after
         rm.(image_paths)
     end
+end
+
+function extract_docstrings_from_file(file::String)
+    docstrings = String[]
+    open(file, "r") do io
+        in_docstring = false
+        docstring_buffer = IOBuffer()
+
+        for line in eachline(io)
+            if startswith(line, "\"\"\"") || startswith(line, "#=")
+                if in_docstring
+                    in_docstring = false
+                    push!(docstrings, String(take!(docstring_buffer)))
+                else
+                    in_docstring = true
+                    write(docstring_buffer, line * "\n")
+                end
+            elseif in_docstring
+                write(docstring_buffer, line * "\n")
+            end
+        end
+    end
+    return docstrings
+end
+
+function extract_docstrings_from_src(src_dir::String)
+    docstrings = String[]
+    for (root, _, files) in walkdir(src_dir)
+        for file in files
+            if endswith(file, ".jl")
+                file_path = joinpath(root, file)
+                append!(docstrings, extract_docstrings_from_file(file_path))
+            end
+        end
+    end
+    return join(docstrings, "\n\n")
 end
 
 end
