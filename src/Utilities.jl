@@ -54,17 +54,17 @@ Constructs a line of nodes connected by springs in a specified direction.
 Each node is positioned along the line according to its index and the total length,
 with springs connecting adjacent nodes.
 """
-function node_line(n_nodes::Int,length::Float64,k::Float64,r::Float64;angle::Float64=0.0)
+function node_line(n_nodes::Int, length::Float64, k::Float64, r::Float64; angle::Float64=0.0)
     nodes = []
     for i in 1:n_nodes
-        x = (i*length/n_nodes)*cos(angle)
-        y = (i*length/n_nodes)*sin(angle)
-        push!(nodes, Node(Pos(x,y)))
+        x = (i * length / n_nodes) * cos(angle)
+        y = (i * length / n_nodes) * sin(angle)
+        push!(nodes, Node(Pos(x, y)))
     end
 
     springs = []
     for i in 1:(n_nodes-1)
-        push!(springs,Spring((i,i+1), k, r))
+        push!(springs, Spring((i, i + 1), k, r))
     end
 
     return nodes, springs
@@ -123,6 +123,19 @@ function extract_docstrings_from_src(src_dir::String)
         end
     end
     return join(docstrings, "\n\n")
+end
+
+function update_readme_with_docs(src_dir::String, readme_path::String)
+    docstrings = extract_docstrings_from_src(src_dir)
+
+    if docstrings == ""
+        println("No docstrings found.")
+        return
+    end
+
+    readme_content = read(readme_path, String)
+
+    doc_section_regex = r"(?s)(# Documentation\n)"
 end
 
 end
