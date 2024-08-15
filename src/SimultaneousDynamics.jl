@@ -1,6 +1,6 @@
 module SimultaneousDynamics
 
-export Pos, Node, Spring, World, optimization_step!, step!, Base, plot_world, node_polygon, node_line, create_image_stack
+export Pos, Node, Spring, World, optimization_step!, step!, Base, plot_world, node_polygon, node_line, create_image_stack, update_readme_with_docs
 
 include("Types.jl")
 include("Functions.jl")

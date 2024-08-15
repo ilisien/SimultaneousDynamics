@@ -3,7 +3,7 @@ module Utilities
 using ..Types
 using Images, FileIO, FilePathsBase
 
-export node_polygon, create_image_stack, node_line
+export node_polygon, create_image_stack, node_line, update_readme_with_docs
 
 """
     node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64) -> Tuple{Vector{Node}, Vector{Spring}}
@@ -136,6 +136,17 @@ function update_readme_with_docs(src_dir::String, readme_path::String)
     readme_content = read(readme_path, String)
 
     doc_section_regex = r"(?s)(# Documentation\n)"
+
+    if occursin(doc_section_regex, readme_content)
+        readme_content = replace(readme_content, doc_section_regex) do match
+            "# Documentation\n\n" * docstrings * "\n\n" * match.match[3]
+        end
+    else
+        readme_content *= "\n\n# Documentation\n\n" * docstrings * "\n"
+    end
+
+    write(readme_path, readme_content)
+    println("README.md updated with documentation!!!")
 end
 
 end
