@@ -91,19 +91,31 @@ end
 
 function extract_docstrings_from_file(file::String)
     docstrings = String[]
-    open(file, "r") do io
-        in_docstring = false
-        docstring_buffer = IOBuffer()
+    function_name = ""
+    in_docstring = false
+    docstring_buffer = IOBuffer()
 
+    open(file, "r") do io
         for line in eachline(io)
-            if startswith(line, "\"\"\"") || startswith(line, "#=")
+            if startswith(line, "\"\"\"")
                 if in_docstring
                     in_docstring = false
-                    push!(docstrings, String(take!(docstring_buffer)))
+                    full_docstring = String(take!(docstring_buffer))
+                    # Extract the first line to use as the function signature
+                    lines = split(full_docstring, "\n")
+                    if !isempty(lines) && function_name != ""
+                        header = "## $function_name\n"
+                        content = join(lines[2:end], "\n")
+                        # Convert existing headers to H3 format
+                        content = replace(content, r"# (\w+)" => s -> "### " * s[2:end])
+                        push!(docstrings, header * content)
+                    end
                 else
                     in_docstring = true
-                    write(docstring_buffer, line * "\n")
+                    write(docstring_buffer, line[4:end] * "\n")  # Strip the initial triple quotes
                 end
+            elseif startswith(line, "function")
+                function_name = strip(line)
             elseif in_docstring
                 write(docstring_buffer, line * "\n")
             end
@@ -135,18 +147,20 @@ function update_readme_with_docs(src_dir::String, readme_path::String)
 
     readme_content = read(readme_path, String)
 
-    doc_section_regex = r"(?s)(# Documentation\n)"
+    # Regex to find the Documentation section
+    doc_section_regex = r"(?s)(# Documentation\n)(.*?)(\n#|\$)"
 
     if occursin(doc_section_regex, readme_content)
         readme_content = replace(readme_content, doc_section_regex) do match
             "# Documentation\n\n" * docstrings * "\n\n" * match.match[3]
         end
     else
+        # If no Documentation section exists, add it at the end
         readme_content *= "\n\n# Documentation\n\n" * docstrings * "\n"
     end
 
     write(readme_path, readme_content)
-    println("README.md updated with documentation!!!")
+    println("README.md updated with documentation.")
 end
 
 end
