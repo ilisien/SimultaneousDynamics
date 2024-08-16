@@ -2,7 +2,7 @@
 
 This is intended to demonstrate how optimization steps between timesteps in a spring system can allow for it to be more accurately modelled to practice assembling Julia packages.  
   
-See docstrings within code for documentation -- WIP documentation for readme.  
+See docstrings within code for documentation, or below. Struct defintions are around halfway down.  
 
 # Steps to Get Running
 
@@ -223,5 +223,26 @@ Stacks a series of images into a single 3D image and saves it to the specified o
 - `image_paths::Vector{String}`: A vector of file paths to the images to be stacked. Each path should be a string representing the location of an image file.
 - `output_path::String`: The file path where the stacked image will be saved. This should be a string representing the desired output location and filename.
 - `delete_after::Bool`: A boolean flag indicating whether the original images should be deleted after stacking. Defaults to `false`.
+
+
+## `update_readme_with_docstrings(src_dir::String, readme_path::String) -> Void`
+
+Updates a README file by extracting docstrings from Julia source files and converting them into markdown format.
+
+### Parameters
+- `src_dir::String`: The directory containing the Julia source files (.jl) from which to extract docstrings.
+- `readme_path::String`: The path to the README file that will be updated with the extracted docstrings.
+
+### Description
+This function automates the process of updating a README file with documentation from Julia source files. It performs the following steps:
+
+1. **Extract Docstrings**: Scans each `.jl` file in the specified source directory (`src_dir`) and extracts all docstrings encapsulated by `\"\"\"`.
+
+2. **Convert to Markdown**: Converts the extracted docstrings into markdown format suitable for inclusion in a README file. The first line of the docstring is treated as the function signature and formatted as a markdown header.
+
+3. **Update README**: Finds the `# Documentation` section in the specified README file (`readme_path`) and replaces it with the newly generated documentation. If the `# Documentation` section is not found, an error is raised.
+
+### Returns
+- `Void`: This function updates the README file in place and does not return any value.
 
 

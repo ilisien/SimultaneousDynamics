@@ -87,6 +87,27 @@ function create_image_stack(image_paths::Vector{String}, output_path::String, de
     end
 end
 
+"""
+    update_readme_with_docstrings(src_dir::String, readme_path::String) -> Void
+
+Updates a README file by extracting docstrings from Julia source files and converting them into markdown format.
+
+# Parameters
+- `src_dir::String`: The directory containing the Julia source files (.jl) from which to extract docstrings.
+- `readme_path::String`: The path to the README file that will be updated with the extracted docstrings.
+
+# Description
+This function automates the process of updating a README file with documentation from Julia source files. It performs the following steps:
+
+1. **Extract Docstrings**: Scans each `.jl` file in the specified source directory (`src_dir`) and extracts all docstrings encapsulated by `\"\"\"`.
+   
+2. **Convert to Markdown**: Converts the extracted docstrings into markdown format suitable for inclusion in a README file. The first line of the docstring is treated as the function signature and formatted as a markdown header.
+
+3. **Update README**: Finds the `# Documentation` section in the specified README file (`readme_path`) and replaces it with the newly generated documentation. If the `# Documentation` section is not found, an error is raised.
+
+# Returns
+- `Void`: This function updates the README file in place and does not return any value.
+"""
 function update_readme_with_docstrings(src_dir::String, readme_path::String)
     # Function to extract docstrings from a file
     function extract_docstrings(file_path::String)
