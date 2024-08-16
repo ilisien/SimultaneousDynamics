@@ -3,7 +3,7 @@ module Utilities
 using ..Types
 using Images, FileIO, FilePathsBase
 
-export node_polygon, create_image_stack, node_line, update_readme_with_docs
+export node_polygon, create_image_stack, node_line, update_readme_with_docstrings
 
 """
     node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64) -> Tuple{Vector{Node}, Vector{Spring}}
@@ -89,78 +89,89 @@ function create_image_stack(image_paths::Vector{String}, output_path::String, de
     end
 end
 
-function extract_docstrings_from_file(file::String)
-    docstrings = String[]
-    function_name = ""
-    in_docstring = false
-    docstring_buffer = IOBuffer()
+function update_readme_with_docstrings(src_dir::String, readme_path::String)
+    # Function to extract docstrings from a file
+    function extract_docstrings(file_path::String)
+        docstrings = []
+        current_docstring = ""
+        inside_docstring = false
 
-    open(file, "r") do io
-        for line in eachline(io)
-            if startswith(line, "\"\"\"")
-                if in_docstring
-                    in_docstring = false
-                    full_docstring = String(take!(docstring_buffer))
-                    # Extract the first line to use as the function signature
-                    lines = split(full_docstring, "\n")
-                    if !isempty(lines) && function_name != ""
-                        header = "## $function_name\n"
-                        content = join(lines[2:end], "\n")
-                        # Convert existing headers to H3 format
-                        content = replace(content, r"# (\w+)" => s -> "### " * s[2:end])
-                        push!(docstrings, header * content)
-                    end
-                else
-                    in_docstring = true
-                    write(docstring_buffer, line[4:end] * "\n")  # Strip the initial triple quotes
+        for line in eachline(file_path)
+            if startswith(strip(line), "\"\"\"")
+                if inside_docstring
+                    # End of docstring
+                    push!(docstrings, current_docstring)
+                    current_docstring = ""
                 end
-            elseif startswith(line, "function")
-                function_name = strip(line)
-            elseif in_docstring
-                write(docstring_buffer, line * "\n")
+                inside_docstring = !inside_docstring
+            elseif inside_docstring
+                current_docstring *= line * "\n"
             end
         end
-    end
-    return docstrings
-end
 
-function extract_docstrings_from_src(src_dir::String)
-    docstrings = String[]
-    for (root, _, files) in walkdir(src_dir)
-        for file in files
-            if endswith(file, ".jl")
-                file_path = joinpath(root, file)
-                append!(docstrings, extract_docstrings_from_file(file_path))
+        return docstrings
+    end
+
+    # Function to convert a docstring to markdown
+    function convert_docstring_to_markdown(docstring::String)
+        lines = split(docstring, "\n")
+        markdown = ""
+        for i in 1:length(lines)
+            line = strip(lines[i])
+            if i == 1 && !isempty(line)
+                # The first line is assumed to be the function definition
+                markdown *= "## `" * line * "`\n"
+            elseif startswith(line, "# ")
+                # Convert h1 format to h3 format
+                markdown *= "###" * lstrip(line, '#') * "\n"
+            else
+                markdown *= line * "\n"
             end
         end
-    end
-    return join(docstrings, "\n\n")
-end
-
-function update_readme_with_docs(src_dir::String, readme_path::String)
-    docstrings = extract_docstrings_from_src(src_dir)
-
-    if docstrings == ""
-        println("No docstrings found.")
-        return
+        return markdown
     end
 
-    readme_content = read(readme_path, String)
+    # Function to update the README file
+    function update_readme(docstrings::Vector{String})
+        # Read the current README content
+        readme_content = read(readme_path, String)
 
-    # Regex to find the Documentation section
-    doc_section_regex = r"(?s)(# Documentation\n)(.*?)(\n#|\$)"
+        # Find the index of the # Documentation section
+        doc_section_start = findfirst(r"# Documentation", readme_content)[1]
 
-    if occursin(doc_section_regex, readme_content)
-        readme_content = replace(readme_content, doc_section_regex) do match
-            "# Documentation\n\n" * docstrings * "\n\n" * match.match[3]
+        if doc_section_start === nothing
+            error("# Documentation section not found in README.md")
         end
-    else
-        # If no Documentation section exists, add it at the end
-        readme_content *= "\n\n# Documentation\n\n" * docstrings * "\n"
+
+        # Extract the part before the # Documentation section
+        before_doc_section = readme_content[1:doc_section_start-1]
+
+        # Create the new documentation section
+        documentation_section = "# Documentation\n\n"
+        for docstring in docstrings
+            documentation_section *= convert_docstring_to_markdown(docstring) * "\n"
+        end
+
+        # Combine everything and write back to the README
+        new_readme_content = before_doc_section * documentation_section
+        open(readme_path, "w") do f
+            write(f, new_readme_content)
+        end
     end
 
-    write(readme_path, readme_content)
-    println("README.md updated with documentation.")
+    # Find all Julia files in the src directory
+    julia_files = filter(x -> endswith(x, ".jl"), readdir(src_dir, join=true))
+
+    # Extract docstrings from all files
+    all_docstrings = String[]
+    for file in julia_files
+        append!(all_docstrings, extract_docstrings(file))
+    end
+
+    # Update the README with the extracted docstrings
+    update_readme(all_docstrings)
+
+    println("README.md updated successfully.")
 end
 
 end
