@@ -38,21 +38,19 @@ function node_polygon(num_sides::Int, radius::Float64, k::Float64, r::Float64)
 end
 
 """
+    node_line(n_nodes::Int, length::Float64, k::Float64, r::Float64; angle::Float64=0.0) -> Tuple{Vector{Node}, Vector{Spring}}
+
 Constructs a line of nodes connected by springs in a specified direction.
 
-# Arguments
-- `n_nodes::Int`: Number of nodes in the line.
-- `length::Float64`: Total length of the line.
-- `k::Float64`: Spring stiffness coefficient.
-- `r::Float64`: Rest length of the spring.
-- `angle::Float64=0.0`: Angle (in radians) of the line direction relative to the x-axis. Default is 0.0.
+# Parameters
+- `n_nodes::Int`: The number of nodes in the line.
+- `length::Float64`: The total length of the line.
+- `k::Float64`: The stiffness coefficient for the springs.
+- `r::Float64`: The natural (relaxed) length of the springs.
+- `angle::Float64=0.0`: The angle (in radians) of the line direction relative to the x-axis. Default is 0.0.
 
 # Returns
-- `nodes`: Array of `Node` objects representing each node.
-- `springs`: Array of `Spring` objects connecting the nodes.
-
-Each node is positioned along the line according to its index and the total length,
-with springs connecting adjacent nodes.
+- `Tuple{Vector{Node}, Vector{Spring}}`: A tuple containing a vector of `Node` structures representing each node, and a vector of `Spring` structures connecting the nodes.
 """
 function node_line(n_nodes::Int, length::Float64, k::Float64, r::Float64; angle::Float64=0.0)
     nodes = []
@@ -116,7 +114,7 @@ function update_readme_with_docstrings(src_dir::String, readme_path::String)
     function convert_docstring_to_markdown(docstring::String)
         lines = split(docstring, "\n")
         markdown = ""
-        for i in 1:length(lines)
+        for i in eachindex(lines)
             line = strip(lines[i])
             if i == 1 && !isempty(line)
                 # The first line is assumed to be the function definition

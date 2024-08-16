@@ -52,26 +52,25 @@ Calculates the Euclidean distance between two positions.
 - `Float64`: The Euclidean distance between `p1` and `p2`.
 
 
-## `Calculates the mean of the given vector.`
-
-### Methods
-
 ## `mean(v::Vector{Pos}) -> Float64`
+
 Calculates the mean of the absolute values of the coordinates in a vector of positions.
 
-- **Parameters**
+### Parameters
 - `v::Vector{Pos}`: A vector of `Pos` objects, each with `x` and `y` coordinates.
 
-- **Returns**
+### Returns
 - `Float64`: The mean of the absolute values of the coordinates.
 
+
 ## `mean(v::Vector{Float64}) -> Float64`
+
 Calculates the mean of a vector of floating-point numbers.
 
-- **Parameters**
+### Parameters
 - `v::Vector{Float64}`: A vector of floating-point numbers.
 
-- **Returns**
+### Returns
 - `Float64`: The mean of the values in the vector.
 
 
@@ -201,21 +200,19 @@ Generates a polygonal arrangement of nodes connected by springs.
 - `Tuple{Vector{Node}, Vector{Spring}}`: A tuple containing a vector of `Node` structures and a vector of `Spring` structures that form the polygon.
 
 
-## `Constructs a line of nodes connected by springs in a specified direction.`
+## `node_line(n_nodes::Int, length::Float64, k::Float64, r::Float64; angle::Float64=0.0) -> Tuple{Vector{Node}, Vector{Spring}}`
 
-### Arguments
-- `n_nodes::Int`: Number of nodes in the line.
-- `length::Float64`: Total length of the line.
-- `k::Float64`: Spring stiffness coefficient.
-- `r::Float64`: Rest length of the spring.
-- `angle::Float64=0.0`: Angle (in radians) of the line direction relative to the x-axis. Default is 0.0.
+Constructs a line of nodes connected by springs in a specified direction.
+
+### Parameters
+- `n_nodes::Int`: The number of nodes in the line.
+- `length::Float64`: The total length of the line.
+- `k::Float64`: The stiffness coefficient for the springs.
+- `r::Float64`: The natural (relaxed) length of the springs.
+- `angle::Float64=0.0`: The angle (in radians) of the line direction relative to the x-axis. Default is 0.0.
 
 ### Returns
-- `nodes`: Array of `Node` objects representing each node.
-- `springs`: Array of `Spring` objects connecting the nodes.
-
-Each node is positioned along the line according to its index and the total length,
-with springs connecting adjacent nodes.
+- `Tuple{Vector{Node}, Vector{Spring}}`: A tuple containing a vector of `Node` structures representing each node, and a vector of `Spring` structures connecting the nodes.
 
 
 ## `create_image_stack(image_paths::Vector{String}, output_path::String, delete_after::Bool=false)`
